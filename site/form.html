@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Submit Your Site</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl">
+      <h1 class="text-2xl font-bold mb-6 text-center">Submit Your Site</h1>
+
+      <!-- Authentication status -->
+      <div id="authStatus" class="mb-4 p-3 rounded-lg text-center hidden">
+        <span id="authMessage"></span>
+      </div>
+
+      <div
+        class="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded-lg text-center"
+      >
+        Note: You cannot change the <strong>Title</strong> or
+        <strong>Link</strong> after submission. Please double-check them before
+        submitting.
+      </div>
+
+      <form id="siteForm" onsubmit="submitSiteForm(event)" class="space-y-4">
+        <div>
+          <label class="block font-medium mb-1"
+            >Title (unique) <span class="text-red-500">*</span></label
+          >
+          <input
+            type="text"
+            name="title"
+            required
+            placeholder="e.g., My Awesome Web App"
+            class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring focus:border-blue-400"
+          />
+          <p class="text-sm text-gray-600 mt-1">
+            Enter a unique, descriptive title for your website or project
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-medium mb-1"
+            >Link (unique) <span class="text-red-500">*</span></label
+          >
+          <input
+            type="url"
+            name="link"
+            required
+            placeholder="https://example.com"
+            class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring focus:border-blue-400"
+          />
+          <p class="text-sm text-gray-600 mt-1">
+            The main URL where your site can be accessed (must start with
+            https://)
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-medium mb-1">Short Description</label>
+          <input
+            required
+            type="text"
+            name="short_description"
+            placeholder="Brief one-line description of your site"
+            class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring focus:border-blue-400"
+          />
+          <p class="text-sm text-gray-600 mt-1">
+            A concise summary of what your site does (1-2 sentences)
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-medium mb-1">Long Description</label>
+          <textarea
+            required
+            name="long_description"
+            rows="3"
+            placeholder="Detailed description of your site's features, purpose, and what makes it special..."
+            class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring focus:border-blue-400"
+          ></textarea>
+          <p class="text-sm text-gray-600 mt-1">
+            Provide more details about your site's functionality, target
+            audience, and key features
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-medium mb-1">Creator Name</label>
+          <input
+            type="text"
+            name="creator_name"
+            placeholder="Your name or organization"
+            class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring focus:border-blue-400"
+          />
+          <p class="text-sm text-gray-600 mt-1">
+            The name of the person or team who created this site
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-medium mb-1">About Creator</label>
+          <input
+            type="text"
+            name="creator_about"
+            placeholder="Brief background about yourself or your team"
+            class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring focus:border-blue-400"
+          />
+          <p class="text-sm text-gray-600 mt-1">
+            A short bio or description of the creator(s) and their background
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-medium mb-1"
+            >Preview Images (|| separated)</label
+          >
+          <input
+            type="text"
+            name="preview_images"
+            placeholder="https://example.com/screenshot1.png||https://example.com/screenshot2.png"
+            class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring focus:border-blue-400"
+          />
+          <p class="text-sm text-gray-600 mt-1">
+            URLs of screenshots or preview images of your site, separated by ||
+            (double pipes). Example:
+            https://i.imgur.com/abc123.png||https://i.imgur.com/def456.png
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-medium mb-1">Contact Info</label>
+          <input
+            type="text"
+            name="contact_info"
+            placeholder="email@example.com or @username"
+            class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring focus:border-blue-400"
+          />
+          <p class="text-sm text-gray-600 mt-1">
+            How people can reach you (email, social media, or other contact
+            method)
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-medium mb-1">Icon URL</label>
+          <input
+            required
+            type="url"
+            name="icon_url"
+            placeholder="https://example.com/favicon.ico"
+            class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring focus:border-blue-400"
+          />
+          <p class="text-sm text-gray-600 mt-1">
+            URL to your site's icon or logo (favicon, logo image, etc.)
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+
+    <script type="module">
+      import { supabase } from "./supa.js";
+
+      let currentUser = null;
+
+      // Check authentication status on load
+      async function checkAuth() {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        currentUser = user;
+        updateAuthStatus(user);
+      }
+
+      function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      function updateAuthStatus(user) {
+        const authStatus = document.getElementById("authStatus");
+        const authMessage = document.getElementById("authMessage");
+        const submitButton = document.querySelector('button[type="submit"]');
+
+        if (user) {
+          authStatus.className =
+            "mb-4 p-3 rounded-lg text-center bg-green-100 text-green-800";
+          authMessage.textContent = `✓ Authenticated as ${user.email}`;
+          submitButton.disabled = false;
+          submitButton.className =
+            "w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition";
+        } else {
+          authStatus.className =
+            "mb-4 p-3 rounded-lg text-center bg-red-100 text-red-800";
+          authMessage.textContent =
+            "⚠️ You must be logged in to submit a site. Please close this form and login first.";
+          submitButton.disabled = true;
+          submitButton.className =
+            "w-full bg-gray-400 text-white py-2 rounded-xl cursor-not-allowed";
+        }
+        authStatus.classList.remove("hidden");
+      }
+
+      async function submitSiteForm(event) {
+        event.preventDefault();
+
+        if (!currentUser) {
+          alert("Please login first to submit a site.");
+          return;
+        }
+
+        const form = event.target;
+        const submitButton = form.querySelector('button[type="submit"]');
+
+        // Validate URL
+        const link = form.link.value.trim();
+        if (!link.startsWith("https://")) {
+          alert("Please enter a valid URL starting with https://");
+          return;
+        }
+
+        // Disable submit button and show loading
+        submitButton.disabled = true;
+        submitButton.textContent = "Submitting...";
+
+        try {
+          const data = {
+            timestamp: new Date().toISOString(),
+            title: form.title.value.trim(),
+            link: form.link.value.trim(),
+            short_description: form.short_description.value.trim(),
+            long_description: form.long_description.value.trim(),
+            creator_name: form.creator_name.value.trim(),
+            creator_about: form.creator_about.value.trim(),
+            preview_images: form.preview_images.value.trim(),
+            contact_info: form.contact_info.value.trim(),
+            icon_url: form.icon_url.value.trim(),
+            verified: false,
+            user_id: currentUser.id,
+          };
+          console.log(data);
+
+          const { error } = await supabase.from("ubghub_sites").insert([data]);
+
+          if (error) {
+            throw error;
+          }
+
+          // Success!
+          alert(
+            "Site submitted successfully! It will be reviewed before appearing on the site."
+          );
+          form.reset();
+        } catch (error) {
+          console.error("Error submitting site:", error);
+
+          if (error.code === "23505") {
+            alert(
+              "A site with this title or link already exists. Please use a different title/link."
+            );
+          } else {
+            alert("Error submitting site: " + error.message);
+          }
+        } finally {
+          // Re-enable submit button
+          submitButton.disabled = false;
+          submitButton.textContent = "Submit";
+        }
+      }
+
+      // Listen for auth changes
+      supabase.auth.onAuthStateChange((event, session) => {
+        currentUser = session?.user || null;
+        updateAuthStatus(currentUser);
+      });
+
+      // Initialize on load
+      document.addEventListener("DOMContentLoaded", () => {
+        checkAuth();
+        // Make submitSiteForm available globally
+        window.submitSiteForm = submitSiteForm;
+      });
+    </script>
+  </body>
+</html>
