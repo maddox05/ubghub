@@ -46,7 +46,7 @@ UBGHub is where unblocked games makers learn how to:
 ## Sites
 
 - **Main**: [ubghub.org](https://ubghub.org) - Showcase your site here
-- **Docs**: [learn.ubghub.org](https://learn.ubghub.org) - All the guides and tutorials
+- **Docs**: [docs.ubghub.org](https://docs.ubghub.org) - All the guides and tutorials
 
 ## Join The Community
 
@@ -54,7 +54,7 @@ Got questions? Want to share what you're working on? [Join our Discord](https://
 
 ## Getting Started
 
-1. Check out the docs at [learn.ubghub.org](https://learn.ubghub.org)
+1. Check out the docs at [docs.ubghub.org](https://docs.ubghub.org)
 2. [Join our Discord](https://discord.gg/7CMSEmzBDC) and say hi
 3. Build something cool
 4. Share it with us!
