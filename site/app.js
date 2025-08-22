@@ -202,22 +202,35 @@ function showSiteDetails(siteTitle) {
                 : ""
             }
 
-            <!-- Up-vote button -->
-            <button class="flex items-center gap-2 bg-neo-primary text-neo-secondary px-4 py-2 rounded-lg font-semibold hover:bg-opacity-90 transition-all" onclick="handleUpvote(event, '${
-              site.link
-            }')">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
-                <span id="modal-upvote-count">${
-                  upvoteCounts[site.link] ?? 0
-                }</span>
-                <span>Upvote</span>
-            </button>
+            <!-- Action buttons -->
+            <div class="flex gap-3 flex-wrap">
+                <!-- Up-vote button -->
+                <button class="flex items-center gap-2 bg-neo-primary text-neo-secondary px-4 py-2 rounded-lg font-semibold hover:bg-opacity-90 transition-all" onclick="handleUpvote(event, '${
+                  site.link
+                }')">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/></svg>
+                    <span id="modal-upvote-count">${
+                      upvoteCounts[site.link] ?? 0
+                    }</span>
+                    <span>Upvote</span>
+                </button>
 
-            <a href="${
-              site.link
-            }?utm_source=ubghub.org&utm_medium=referral&utm_campaign=ubghub.org" target="_blank" class="inline-block bg-neo-primary text-neo-secondary px-6 py-2 rounded-lg font-semibold hover:bg-opacity-90 transition-all">
-                Visit Site
-            </a>
+                <!-- Get Embed button -->
+                <button class="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-500 transition-all" onclick="showOwnerModal(event, '${
+                  site.link
+                }', '${site.title}')">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M8 12.2v-1.6l4.5-4.5 1.6 1.6L9.8 12H8zm6.9-6.9c-.2-.2-.6-.2-.8 0l-.7.7 1.6 1.6.7-.7c.2-.2.2-.6 0-.8l-.8-.8z"/></svg>
+                    <span>Get Embed</span>
+                </button>
+
+                <!-- Visit Site button -->
+                <a href="${
+                  site.link
+                }?utm_source=ubghub.org&utm_medium=referral&utm_campaign=ubghub.org" target="_blank" class="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-500 transition-all">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/></svg>
+                    <span>Visit Site</span>
+                </a>
+            </div>
         </div>
     `;
 
@@ -343,8 +356,65 @@ async function handleUpvote(event, identifier) {
 // Initialize
 fetchSites();
 
+// Show owner modal for claiming site and getting embed code
+function showOwnerModal(event, siteLink, siteTitle) {
+  event.stopPropagation();
+
+  const modal = document.getElementById("ownerModal");
+  const modalTitle = document.getElementById("ownerModalTitle");
+  const embedCode = document.getElementById("embedCode");
+
+  modalTitle.textContent = `Get Embed Code for "${siteTitle}"`;
+
+  // Generate simple embed code that works without external JS
+  const cleanId = encodeURIComponent(siteLink).replace(/%/g, "");
+  const widgetCode = `<!-- UBGHub Upvote Widget -->
+<a href="https://ubghub.org/?site=${encodeURIComponent(
+    siteTitle
+  )}&utm_source=${encodeURIComponent(
+    siteLink
+  )}" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; background: linear-gradient(135deg, #00ff9d 0%, #00cc7a 100%); color: #1a1a1a; border: none; border-radius: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; box-shadow: 0 2px 4px rgba(0, 255, 157, 0.2); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(0, 255, 157, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(0, 255, 157, 0.2)'">
+  <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 20 20">
+    <path d="M3 10l4-4v3h4V2l4 4v14H3V10z"/>
+  </svg>
+  <span style="font-weight: 700; margin-left: 4px;">Vote on UBGHub</span>
+</a>`;
+
+  embedCode.value = widgetCode;
+
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+}
+
+// Close owner modal
+function closeOwnerModal() {
+  const modal = document.getElementById("ownerModal");
+  modal.classList.add("hidden");
+  modal.classList.remove("flex");
+}
+
+// Copy embed code to clipboard
+function copyEmbedCode() {
+  const embedCode = document.getElementById("embedCode");
+  embedCode.select();
+  document.execCommand("copy");
+
+  const copyBtn = document.getElementById("copyEmbedBtn");
+  const originalText = copyBtn.textContent;
+  copyBtn.textContent = "Copied!";
+  copyBtn.classList.add("bg-green-500");
+
+  setTimeout(() => {
+    copyBtn.textContent = originalText;
+    copyBtn.classList.remove("bg-green-500");
+  }, 2000);
+}
+
 // Expose functions used in inline event attributes so they work with ES modules.
 window.showSiteDetails = showSiteDetails;
 window.handleSiteCardClick = handleSiteCardClick;
 window.closeModal = closeModal;
 window.handleUpvote = handleUpvote;
+window.showOwnerModal = showOwnerModal;
+window.closeOwnerModal = closeOwnerModal;
+window.copyEmbedCode = copyEmbedCode;
