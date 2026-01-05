@@ -103,15 +103,32 @@ async function fetchSites() {
 // Display sites in the grid
 function displaySites(sitesToDisplay) {
   const grid = document.getElementById("sitesGrid");
-  grid.innerHTML = sitesToDisplay
-    .map(
-      (site) => `
+
+  // Sponsored card that links directly to maddoxcloud.com
+  const sponsoredCard = `
+    <a href="https://maddoxcloud.com?utm_source=ubghub.org&utm_medium=sponsored&utm_campaign=ubghub_sponsored" target="_blank" rel="noopener" class="neo-card rounded-lg p-6 hover:border-neo-primary transition-all cursor-pointer block relative border-2 border-yellow-500/30">
+        <span class="absolute top-2 right-2 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded">SPONSORED</span>
+        <div class="flex items-start gap-4">
+            <img src="https://maddoxcloud.com/favicon.ico" alt="Maddox Cloud" class="w-16 h-16 rounded-lg object-cover">
+            <div>
+                <h3 class="text-xl font-semibold text-neo-primary mb-2">MaddoxCloud</h3>
+                <p class="text-gray-300 text-sm">Play Mobile Games like Clash Royale in School | All Unblocked!</p>
+            </div>
+        </div>
+    </a>
+  `;
+
+  grid.innerHTML =
+    sponsoredCard +
+    sitesToDisplay
+      .map(
+        (site) => `
         <a href="?site=${encodeURIComponent(site.title).replaceAll(
           /%20/g,
           "+" // do not put %20 in site name
         )}" class="neo-card rounded-lg p-6 hover:border-neo-primary transition-all cursor-pointer block" onclick="return handleSiteCardClick(event, '${
-        site.title
-      }')">
+          site.title
+        }')">
             <div class="flex items-start gap-4">
                 ${
                   site.iconUrl
@@ -132,8 +149,8 @@ function displaySites(sitesToDisplay) {
             </div>
         </a>
     `
-    )
-    .join("");
+      )
+      .join("");
 }
 
 // Handle site card clicks - prevent navigation but show modal
