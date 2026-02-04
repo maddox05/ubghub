@@ -1,0 +1,12 @@
+{
+  "name": "ubghub-site",
+  "version": "1.0.0",
+  "description": "UBGHub - Unblocked Games Directory",
+  "type": "module",
+  "scripts": {
+    "generate-sitemap": "node generate-sitemap.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0"
+  }
+}

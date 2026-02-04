@@ -7,6 +7,189 @@ const CSV_URL =
 
 let sites = [];
 
+// --- SEO Meta Tag Management ---------------------------------------------------
+// Store default meta values so we can restore them when modal closes
+const defaultMeta = {
+  title: "UBGHub - Unblocked Games Directory",
+  description:
+    "Discover and share unblocked games and sites. UBGHub is a community-driven directory providing a safe and organized way to access unblocked content.",
+  url: "https://ubghub.org/",
+  image: "https://ubghub.org/ubghub.png",
+};
+
+/**
+ * Update meta tags dynamically for SEO when viewing a specific site.
+ * This helps Google index individual ?site= pages with unique metadata.
+ */
+function updateMetaTags(site) {
+  const siteUrl = `https://ubghub.org/?site=${encodeURIComponent(site.title).replace(/%20/g, "+")}`;
+  const siteTitle = `${site.title} - UBGHub`;
+  const siteDescription = site.longDescription || site.shortDescription || defaultMeta.description;
+  const siteImage = site.iconUrl || defaultMeta.image;
+
+  // Update document title
+  document.title = siteTitle;
+
+  // Update or create meta tags
+  setMetaTag("name", "description", siteDescription);
+  setMetaTag("name", "title", siteTitle);
+
+  // Open Graph tags
+  setMetaTag("property", "og:title", siteTitle);
+  setMetaTag("property", "og:description", siteDescription);
+  setMetaTag("property", "og:url", siteUrl);
+  setMetaTag("property", "og:image", siteImage);
+
+  // Twitter tags
+  setMetaTag("property", "twitter:title", siteTitle);
+  setMetaTag("property", "twitter:description", siteDescription);
+  setMetaTag("property", "twitter:url", siteUrl);
+  setMetaTag("property", "twitter:image", siteImage);
+
+  // Update canonical link
+  updateCanonicalLink(siteUrl);
+
+  // Inject JSON-LD structured data
+  injectJsonLd(site, siteUrl);
+}
+
+/**
+ * Reset meta tags to default values when modal is closed.
+ */
+function resetMetaTags() {
+  document.title = defaultMeta.title;
+
+  setMetaTag("name", "description", defaultMeta.description);
+  setMetaTag("name", "title", defaultMeta.title);
+
+  setMetaTag("property", "og:title", defaultMeta.title);
+  setMetaTag("property", "og:description", defaultMeta.description);
+  setMetaTag("property", "og:url", defaultMeta.url);
+  setMetaTag("property", "og:image", defaultMeta.image);
+
+  setMetaTag("property", "twitter:title", defaultMeta.title);
+  setMetaTag("property", "twitter:description", defaultMeta.description);
+  setMetaTag("property", "twitter:url", defaultMeta.url);
+  setMetaTag("property", "twitter:image", defaultMeta.image);
+
+  updateCanonicalLink(defaultMeta.url);
+  removeJsonLd();
+  removeFeaturedSection();
+}
+
+/**
+ * Helper to set or create a meta tag.
+ */
+function setMetaTag(attr, attrValue, content) {
+  let meta = document.querySelector(`meta[${attr}="${attrValue}"]`);
+  if (!meta) {
+    meta = document.createElement("meta");
+    meta.setAttribute(attr, attrValue);
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute("content", content);
+}
+
+/**
+ * Update or create canonical link element.
+ */
+function updateCanonicalLink(url) {
+  let canonical = document.querySelector('link[rel="canonical"]');
+  if (!canonical) {
+    canonical = document.createElement("link");
+    canonical.setAttribute("rel", "canonical");
+    document.head.appendChild(canonical);
+  }
+  canonical.setAttribute("href", url);
+}
+
+/**
+ * Inject JSON-LD structured data for SEO.
+ */
+function injectJsonLd(site, siteUrl) {
+  // Remove existing JSON-LD first
+  removeJsonLd();
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: `${site.title} - UBGHub`,
+    description: site.longDescription || site.shortDescription,
+    url: siteUrl,
+    mainEntity: {
+      "@type": "WebSite",
+      name: site.title,
+      url: site.link,
+      description: site.shortDescription,
+    },
+  };
+
+  // Add creator info if available
+  if (site.creatorName) {
+    jsonLd.mainEntity.author = {
+      "@type": "Person",
+      name: site.creatorName,
+    };
+  }
+
+  const script = document.createElement("script");
+  script.type = "application/ld+json";
+  script.id = "site-jsonld";
+  script.textContent = JSON.stringify(jsonLd);
+  document.head.appendChild(script);
+}
+
+/**
+ * Remove JSON-LD structured data.
+ */
+function removeJsonLd() {
+  const existing = document.getElementById("site-jsonld");
+  if (existing) {
+    existing.remove();
+  }
+}
+
+/**
+ * Show a featured section at the top of the page for direct ?site= links.
+ * This provides SEO-friendly content in the DOM with proper heading hierarchy.
+ */
+function showFeaturedSection(site) {
+  removeFeaturedSection();
+
+  const container = document.createElement("div");
+  container.id = "featured-site-section";
+  container.className = "max-w-3xl mx-auto mb-8";
+  container.innerHTML = `
+    <div class="neo-card rounded-lg p-6 border-2 border-neo-primary/50">
+      <div class="flex items-start gap-6">
+        ${site.iconUrl ? `<img src="${site.iconUrl}" alt="${site.title}" class="w-20 h-20 rounded-lg object-cover flex-shrink-0">` : ""}
+        <div class="flex-grow">
+          <h1 class="text-2xl md:text-3xl font-bold text-neo-primary mb-2">${site.title}</h1>
+          <p class="text-gray-300 text-lg mb-3">${site.shortDescription}</p>
+          <p class="text-gray-400">${site.longDescription}</p>
+          ${site.creatorName ? `<p class="text-gray-500 mt-3 text-sm">Created by ${site.creatorName}</p>` : ""}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Insert after the introduction section
+  const introSection = document.querySelector("main .max-w-3xl.mx-auto.mb-12");
+  if (introSection) {
+    introSection.after(container);
+  }
+}
+
+/**
+ * Remove the featured section from the DOM.
+ */
+function removeFeaturedSection() {
+  const existing = document.getElementById("featured-site-section");
+  if (existing) {
+    existing.remove();
+  }
+}
+
 // --- Up-vote state ----------------------------------------------------------
 // Stores per-site up-vote counts that we fetch from Supabase.
 let upvoteCounts = {};
@@ -170,6 +353,14 @@ function showSiteDetails(siteTitle) {
   url.searchParams.set("site", siteTitle);
   window.history.pushState({}, "", url);
 
+  // Update meta tags for SEO
+  updateMetaTags(site);
+  showFeaturedSection(site);
+
+  // Hide the sites grid to focus on the modal content
+  const sitesGrid = document.getElementById("sitesGrid");
+  if (sitesGrid) sitesGrid.style.display = "none";
+
   const modal = document.getElementById("siteModal");
   const modalTitle = document.getElementById("modalTitle");
   const modalContent = document.getElementById("modalContent");
@@ -259,6 +450,13 @@ function closeModal() {
   modal.classList.remove("flex");
 
   currentModalIdentifier = null;
+
+  // Reset meta tags to defaults for SEO
+  resetMetaTags();
+
+  // Show the sites grid again
+  const sitesGrid = document.getElementById("sitesGrid");
+  if (sitesGrid) sitesGrid.style.display = "";
 }
 
 // Check for site parameter in URL and open modal if present
@@ -270,6 +468,10 @@ function checkUrlParameters() {
     // Find the site by title
     const site = sites.find((s) => s.title === siteParam);
     if (site) {
+      // Update meta tags BEFORE showing modal for SEO
+      updateMetaTags(site);
+      // Show featured section for direct links (SEO-friendly content)
+      showFeaturedSection(site);
       showSiteDetails(site.title, site.creatorName);
     }
   }
@@ -279,11 +481,17 @@ function checkUrlParameters() {
 window.addEventListener("popstate", () => {
   const urlParams = new URLSearchParams(window.location.search);
   const siteParam = urlParams.get("site");
+  const sitesGrid = document.getElementById("sitesGrid");
 
   if (siteParam && sites.length > 0) {
     const site = sites.find((s) => s.title === siteParam);
     if (site) {
+      // Update meta tags for SEO
+      updateMetaTags(site);
+      showFeaturedSection(site);
       showSiteDetails(site.title, site.creatorName);
+      // Hide the sites grid
+      if (sitesGrid) sitesGrid.style.display = "none";
     }
   } else {
     // Close modal if no site parameter
@@ -291,6 +499,10 @@ window.addEventListener("popstate", () => {
     modal.classList.add("hidden");
     modal.classList.remove("flex");
     currentModalIdentifier = null;
+    // Reset meta tags to defaults
+    resetMetaTags();
+    // Show the sites grid again
+    if (sitesGrid) sitesGrid.style.display = "";
   }
 });
 
