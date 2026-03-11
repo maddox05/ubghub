@@ -7,6 +7,16 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "UBGHub Docs",
+      head: [
+        {
+          tag: "script",
+          attrs: {
+            async: true,
+            src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2287252922738463",
+            crossorigin: "anonymous",
+          },
+        },
+      ],
       social: [
         {
           icon: "github",
