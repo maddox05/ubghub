@@ -288,12 +288,12 @@ async function fetchSites() {
 function displaySites(sitesToDisplay) {
   const grid = document.getElementById("sitesGrid");
 
-  // Sponsored card that links directly to cloud.maddox.games.com
+  // Sponsored card that links directly to cloud.maddox.games
   const sponsoredCard = `
-    <a href="https://cloud.maddox.games.com?utm_source=ubghub.org&utm_medium=sponsored&utm_campaign=ubghub_sponsored" target="_blank" rel="noopener" class="neo-card rounded-lg p-6 hover:border-neo-primary transition-all cursor-pointer block relative border-2 border-yellow-500/30">
+    <a href="https://cloud.maddox.games?utm_source=ubghub.org&utm_medium=sponsored&utm_campaign=ubghub_sponsored" target="_blank" rel="noopener" class="neo-card rounded-lg p-6 hover:border-neo-primary transition-all cursor-pointer block relative border-2 border-yellow-500/30">
         <span class="absolute top-2 right-2 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded">SPONSORED</span>
         <div class="flex items-start gap-4">
-            <img src="https://cloud.maddox.games.com/favicon.ico" alt="Maddox Cloud" class="w-16 h-16 rounded-lg object-cover">
+            <img src="https://cloud.maddox.games/favicon.ico" alt="Maddox Cloud" class="w-16 h-16 rounded-lg object-cover">
             <div>
                 <h3 class="text-xl font-semibold text-neo-primary mb-2">cloud.maddox.games</h3>
                 <p class="text-gray-300 text-sm">Play Mobile Games like Clash Royale in School | All Unblocked!</p>
