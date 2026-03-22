@@ -24,7 +24,8 @@ const defaultMeta = {
 function updateMetaTags(site) {
   const siteUrl = `https://ubghub.org/?site=${encodeURIComponent(site.title).replace(/%20/g, "+")}`;
   const siteTitle = `${site.title} - UBGHub`;
-  const siteDescription = site.longDescription || site.shortDescription || defaultMeta.description;
+  const siteDescription =
+    site.longDescription || site.shortDescription || defaultMeta.description;
   const siteImage = site.iconUrl || defaultMeta.image;
 
   // Update document title
@@ -267,7 +268,7 @@ async function fetchSites() {
 
     // Sort sites by vote count (desc), fallback to 0.
     sites.sort(
-      (a, b) => (upvoteCounts[b.link] || 0) - (upvoteCounts[a.link] || 0)
+      (a, b) => (upvoteCounts[b.link] || 0) - (upvoteCounts[a.link] || 0),
     );
 
     loadingIndicator.style.display = "none";
@@ -287,14 +288,14 @@ async function fetchSites() {
 function displaySites(sitesToDisplay) {
   const grid = document.getElementById("sitesGrid");
 
-  // Sponsored card that links directly to maddoxcloud.com
+  // Sponsored card that links directly to cloud.maddox.games.com
   const sponsoredCard = `
-    <a href="https://maddoxcloud.com?utm_source=ubghub.org&utm_medium=sponsored&utm_campaign=ubghub_sponsored" target="_blank" rel="noopener" class="neo-card rounded-lg p-6 hover:border-neo-primary transition-all cursor-pointer block relative border-2 border-yellow-500/30">
+    <a href="https://cloud.maddox.games.com?utm_source=ubghub.org&utm_medium=sponsored&utm_campaign=ubghub_sponsored" target="_blank" rel="noopener" class="neo-card rounded-lg p-6 hover:border-neo-primary transition-all cursor-pointer block relative border-2 border-yellow-500/30">
         <span class="absolute top-2 right-2 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded">SPONSORED</span>
         <div class="flex items-start gap-4">
-            <img src="https://maddoxcloud.com/favicon.ico" alt="Maddox Cloud" class="w-16 h-16 rounded-lg object-cover">
+            <img src="https://cloud.maddox.games.com/favicon.ico" alt="Maddox Cloud" class="w-16 h-16 rounded-lg object-cover">
             <div>
-                <h3 class="text-xl font-semibold text-neo-primary mb-2">MaddoxCloud</h3>
+                <h3 class="text-xl font-semibold text-neo-primary mb-2">cloud.maddox.games</h3>
                 <p class="text-gray-300 text-sm">Play Mobile Games like Clash Royale in School | All Unblocked!</p>
             </div>
         </div>
@@ -308,7 +309,7 @@ function displaySites(sitesToDisplay) {
         (site) => `
         <a href="?site=${encodeURIComponent(site.title).replaceAll(
           /%20/g,
-          "+" // do not put %20 in site name
+          "+", // do not put %20 in site name
         )}" class="neo-card rounded-lg p-6 hover:border-neo-primary transition-all cursor-pointer block" onclick="return handleSiteCardClick(event, '${
           site.title
         }')">
@@ -331,7 +332,7 @@ function displaySites(sitesToDisplay) {
                 </div>
             </div>
         </a>
-    `
+    `,
       )
       .join("");
 }
@@ -401,7 +402,7 @@ function showSiteDetails(siteTitle) {
                           .map(
                             (img) => `
                             <img src="${img}" alt="Preview" class="rounded-lg w-full h-32 object-cover">
-                        `
+                        `,
                           )
                           .join("")}
                     </div>
@@ -510,7 +511,7 @@ window.addEventListener("popstate", () => {
 document.getElementById("searchInput").addEventListener("input", (e) => {
   const searchTerm = e.target.value.toLowerCase();
   const filteredSites = sites.filter(
-    (site) => site.title.toLowerCase().includes(searchTerm)
+    (site) => site.title.toLowerCase().includes(searchTerm),
     //   site.shortDescription.toLowerCase().includes(searchTerm) ||
     //   site.creatorName.toLowerCase().includes(searchTerm)
   );
